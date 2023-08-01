@@ -9,11 +9,10 @@ import {
 import routes from "@/router/index.js";
 import { ConfigProvider } from 'zarm';
 
-import NavBar from '@/components/Nav'
+import NavBar from '@/components/Nav';
 
 function App() {
   const location = useLocation();
-  console.log(location);
   const { pathname } = location;
   const navPaths = ['/', '/data', '/user'];
 
