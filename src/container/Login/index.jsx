@@ -2,7 +2,6 @@ import React, { useState, useCallback } from "react";
 import { Button, Input, Checkbox, Cell, Toast } from "zarm";
 import CustomIcon from "@/components/CustomIcon";
 import { post } from "@/utils";
-import cx from "classnames";
 
 import css from "./style.module.less";
 
