@@ -22,7 +22,7 @@ axiosIns.interceptors.response.use(res => {
     if (res.data.code != 200) {
         if (res.data.msg) Toast.show(res.data.msg)
         if (res.data.code == 401) {
-        window.location.href = '/login'
+            // window.location.href = '/login'
         }
         return Promise.reject(res.data)
     }

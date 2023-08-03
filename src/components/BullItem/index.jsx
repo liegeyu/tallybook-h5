@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Cell } from "zarm";
 import PropTypes from "prop-types";
@@ -14,7 +14,17 @@ const BillItem = ({ bill }) => {
   const navigateTo = useNavigate();
 
   useEffect(() => {
+    const _income = bill.bills.filter(item => item.pay_type === 2).reduce((cur, item) => {
+      cur += Number(item.amount);
+      return cur;
+    }, 0);
+    setIncome(_income);
 
+    const _expense = bill.bills.filter(item => item.pay_type === 1).reduce((cur, item) => {
+      cur += Number(item.amount);
+      return cur;
+    }, 0);
+    setExpense(_expense);
   }, [bill.bills])
 
   const goToDetail = (item) => {

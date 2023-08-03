@@ -1,6 +1,9 @@
-import React, { useState } from 'react';
-import { Icon } from "zarm";
+import { useState, useEffect } from 'react';
+import { Icon, Pull } from "zarm";
 import BillItem from "@/components/BullItem";
+import dayjs from "dayjs";
+import { REFRESH_STATE, LOAD_STATE } from "@/utils/pull.js";
+import { get } from "@/utils/index.js";
 
 import css from "./style.module.less";
 
@@ -16,11 +19,123 @@ const Home = () => {
           remark: "",
           type_id: 1,
           type_name: "餐饮"
+        },
+        {
+          amount: "20.00",
+          date: "1623390740000",
+          id: 784,
+          pay_type: 1,
+          remark: "",
+          type_id: 1,
+          type_name: "餐饮"
+        },
+        {
+          amount: "35.00",
+          date: "1623390740000",
+          id: 432,
+          pay_type: 1,
+          remark: "",
+          type_id: 1,
+          type_name: "餐饮"
         }
       ],
       date: '2021-06-11'
+    },
+    {
+      bills: [
+        {
+          amount: "2.00",
+          date: "1623390740000",
+          id: 65,
+          pay_type: 1,
+          remark: "",
+          type_id: 3,
+          type_name: "交通"
+        },
+        {
+          amount: "2.00",
+          date: "1623390740000",
+          id: 3213,
+          pay_type: 1,
+          remark: "",
+          type_id: 3,
+          type_name: "交通"
+        },
+        {
+          amount: "2.00",
+          date: "1623390740000",
+          id: 954,
+          pay_type: 1,
+          remark: "",
+          type_id: 3,
+          type_name: "交通"
+        },
+        {
+          amount: "2.00",
+          date: "1623390740000",
+          id: 931,
+          pay_type: 1,
+          remark: "",
+          type_id: 3,
+          type_name: "交通"
+        },
+        {
+          amount: "2.00",
+          date: "1623390740000",
+          id: 9451,
+          pay_type: 1,
+          remark: "",
+          type_id: 3,
+          type_name: "交通"
+        },
+      ],
+      date: '2021-06-11'
     }
-  ])
+  ]);
+  const [page, setPage] = useState(1);  // 分页
+  const [totalPage, setTotalPage] = useState(0);
+  const [currentTime, setCurrentTime] = useState(dayjs().format("YYYY-MM"));
+  const [refreshing, setRefreshing] = useState(REFRESH_STATE.normal);
+  const [loading, setLoading] = useState(LOAD_STATE.normal);
+
+  useEffect(() => {
+    console.log(page);
+    getBillList();
+  }, [page]);
+
+  const getBillList = async () => {
+    try {
+      const { data } = await get(`/bill/list?page=${page}&page_size=5&date=${currentTime}`);
+      if (page === 1) {
+        setList(data.list);
+      } else {
+        setList(list.concat(data.list));
+      }
+      setTotalPage(data.totalPage);
+      setRefreshing(REFRESH_STATE.success);
+      setLoading(LOAD_STATE.success);
+    } catch (err) {
+      setLoading(LOAD_STATE.failure);
+      setRefreshing(REFRESH_STATE.failure);
+    }
+  }
+
+  const refreshDate = () => {
+    setRefreshing(REFRESH_STATE.loading);
+    if (page !== 1) {
+      setPage(1);
+    } else {
+      getBillList();
+    }
+  }
+
+  const loadData = () => {
+    if (page < totalPage) {
+      setLoading(LOAD_STATE.loading);
+      setPage(page + 1);
+    }
+  }
+
   return (
     <div className={ css.home }>
       <div className={ css.header }>
@@ -39,7 +154,23 @@ const Home = () => {
       </div>
       <div className={ css.contentWrap }>
         {
-          list.map((item, index) => <BillItem bill={ item } key={ index } />)
+          list.length ? <Pull
+            animationDuration={200}
+            stayTime={400}
+            refresh={{
+              state: refreshing,
+              handler: refreshDate
+            }}
+            load={{
+              state: loading,
+              distance: 200,
+              handler: loadData
+            }}
+          >
+            {
+              list.map((item, index) => <BillItem bill={ item } key={ index } />)
+            }
+          </Pull> : null
         }
       </div>
     </div>
