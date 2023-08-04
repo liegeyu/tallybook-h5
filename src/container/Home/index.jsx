@@ -1,10 +1,11 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Icon, Pull } from "zarm";
-import BillItem from "@/components/BullItem";
 import dayjs from "dayjs";
 import { REFRESH_STATE, LOAD_STATE } from "@/utils/pull.js";
 import { get } from "@/utils/index.js";
 
+import BillItem from "@/components/BullItem";
+import PopupType from "@/components/PopupType";
 import css from "./style.module.less";
 
 const Home = () => {
@@ -97,15 +98,18 @@ const Home = () => {
   const [currentTime, setCurrentTime] = useState(dayjs().format("YYYY-MM"));
   const [refreshing, setRefreshing] = useState(REFRESH_STATE.normal);
   const [loading, setLoading] = useState(LOAD_STATE.normal);
+  const typeRef = useRef();
+  const [currentSelect, setCurrentSelect] = useState({});
 
   useEffect(() => {
     console.log(page);
     getBillList();
-  }, [page]);
+    //eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [page, currentSelect]);
 
   const getBillList = async () => {
     try {
-      const { data } = await get(`/bill/list?page=${page}&page_size=5&date=${currentTime}`);
+      const { data } = await get(`/bill/list?page=${page}&page_size=5&date=${currentTime}&type_id=${currentSelect.id || 'all'}`);
       if (page === 1) {
         setList(data.list);
       } else {
@@ -136,6 +140,14 @@ const Home = () => {
     }
   }
 
+  const toggle = () => {
+    typeRef.current && typeRef.current.show();
+  }
+
+  const select = (type) => {
+    console.log('父组件', type);
+  }
+
   return (
     <div className={ css.home }>
       <div className={ css.header }>
@@ -144,10 +156,10 @@ const Home = () => {
           <span className={ css.income }>总支出: <b>￥ 500</b></span>
         </div>
         <div className={ css.typeWrap }>
-          <div className={ css.left }>
-            <span className={ css.title }>类型 <Icon className={css.arrow} type="arrow-bottom" /></span>
+          <div className={ css.left } onClick={ toggle }>
+            <span className={ css.title }>{ currentSelect.name || "全部类型" }<Icon className={css.arrow} type="arrow-bottom" /></span>
           </div>
-          <div className={ css.right }>
+          <div className={ css.right } onClick={ toggle }>
             <span className={ css.time }>2023-08<Icon className={css.arrow} type="arrow-bottom" /></span>
           </div>
         </div>
@@ -173,6 +185,7 @@ const Home = () => {
           </Pull> : null
         }
       </div>
+      <PopupType ref={ typeRef } onSelect={ select } />
     </div>
   )
 }
