@@ -59,7 +59,7 @@ const BillItem = ({ bill }) => {
                     className={ css.itemIcon } 
                     type={ item.type_id ? typeMap[item.type_id].icon : 1 } 
                   />
-                  <span>{ item.type_name }</span>
+                  <span className={ css.typeName}>{ item.type_name }</span>
                 </>
               }
               description={ 

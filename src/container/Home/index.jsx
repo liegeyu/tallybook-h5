@@ -8,6 +8,7 @@ import { ArrowDown } from '@zarm-design/icons';
 import BillItem from "@/components/BullItem";
 import PopupType from "@/components/PopupType";
 import PopupDate from '@/components/PopupDate';
+import CustomIcon from "@/components/CustomIcon";
 import css from "./style.module.less";
 
 const Home = () => {
@@ -83,6 +84,10 @@ const Home = () => {
     setCurrentTime(date);
   }
 
+  const addHandler = () => {
+
+  }
+
   return (
     <div className={ css.home }>
       <div className={ css.header }>
@@ -122,6 +127,7 @@ const Home = () => {
           </Pull> : null
         }
       </div>
+      <div className={ css.add } onClick={ addHandler }><CustomIcon type="tianjia" /></div>
       <PopupType ref={ typeRef } onSelect={ select } />
       <PopupDate ref={ dateRef } onSelect={ selectDate } mode="month" />
     </div>
