@@ -7,7 +7,7 @@ import { get } from '@/utils';
 import css from './style.module.less';
 
 const PopupType = forwardRef(({ onSelect }, ref) => {
-  const [show, setShow] = useState(true);
+  const [show, setShow] = useState(false);
   const [expense, setExpense] = useState([]);
   const [income, setIncome] = useState([]);
   const [active, setActive] = useState([]);
@@ -15,16 +15,15 @@ const PopupType = forwardRef(({ onSelect }, ref) => {
   useEffect(() => {
     (async () => {
       const { data: { list }} = await get('/type/list');
-      setExpense(list.filter(item => item.id === 1));
-      setIncome(list.filter(item => item.id === 2));
+      setExpense(list.filter(item => item.type ==="1"));
+      setIncome(list.filter(item => item.type === "2"));
     })()
   }, []);
 
   const choseType = (type) => {
-    console.log(type)
     setActive(type.id);
     setShow(false);
-    // 父组件传入
+    // 传给父组件
     onSelect(type);
   }
 
@@ -32,7 +31,6 @@ const PopupType = forwardRef(({ onSelect }, ref) => {
     ref.current = {
       show: () => {
         setShow(true);
-        console.log("show??????")
       },
       close: () => {
         setShow(false);
@@ -54,7 +52,7 @@ const PopupType = forwardRef(({ onSelect }, ref) => {
           <Icon type="wrong" className={ css.cross } onClick={() => setShow(false)} />
         </div>
         <div className={ css.content }>
-          <div className={cx({[css.all]: true, [css.active]: active == 'all' })}>全部类型</div>
+          <div className={cx({[css.all]: true, [css.active]: active == 'all' })} onClick={() => choseType({ id: 'all' })}>全部类型</div>
           <div className={ css.title }>支出</div>
           <div className={ css.expenseWrap }>
             {

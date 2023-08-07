@@ -1,111 +1,32 @@
-import { useState, useEffect, useRef } from 'react';
-import { Icon, Pull } from "zarm";
+import React, { useState, useEffect, useRef } from 'react';
+import { List, Pull } from "zarm";
 import dayjs from "dayjs";
 import { REFRESH_STATE, LOAD_STATE } from "@/utils/pull.js";
 import { get } from "@/utils/index.js";
 
+import { ArrowDown } from '@zarm-design/icons';
 import BillItem from "@/components/BullItem";
 import PopupType from "@/components/PopupType";
+import PopupDate from '@/components/PopupDate';
 import css from "./style.module.less";
 
 const Home = () => {
-  const [list, setList] = useState([
-    {
-      bills: [
-        {
-          amount: "25.00",
-          date: "1623390740000",
-          id: 911,
-          pay_type: 1,
-          remark: "",
-          type_id: 1,
-          type_name: "餐饮"
-        },
-        {
-          amount: "20.00",
-          date: "1623390740000",
-          id: 784,
-          pay_type: 1,
-          remark: "",
-          type_id: 1,
-          type_name: "餐饮"
-        },
-        {
-          amount: "35.00",
-          date: "1623390740000",
-          id: 432,
-          pay_type: 1,
-          remark: "",
-          type_id: 1,
-          type_name: "餐饮"
-        }
-      ],
-      date: '2021-06-11'
-    },
-    {
-      bills: [
-        {
-          amount: "2.00",
-          date: "1623390740000",
-          id: 65,
-          pay_type: 1,
-          remark: "",
-          type_id: 3,
-          type_name: "交通"
-        },
-        {
-          amount: "2.00",
-          date: "1623390740000",
-          id: 3213,
-          pay_type: 1,
-          remark: "",
-          type_id: 3,
-          type_name: "交通"
-        },
-        {
-          amount: "2.00",
-          date: "1623390740000",
-          id: 954,
-          pay_type: 1,
-          remark: "",
-          type_id: 3,
-          type_name: "交通"
-        },
-        {
-          amount: "2.00",
-          date: "1623390740000",
-          id: 931,
-          pay_type: 1,
-          remark: "",
-          type_id: 3,
-          type_name: "交通"
-        },
-        {
-          amount: "2.00",
-          date: "1623390740000",
-          id: 9451,
-          pay_type: 1,
-          remark: "",
-          type_id: 3,
-          type_name: "交通"
-        },
-      ],
-      date: '2021-06-11'
-    }
-  ]);
+  const [list, setList] = useState([]);
   const [page, setPage] = useState(1);  // 分页
   const [totalPage, setTotalPage] = useState(0);
-  const [currentTime, setCurrentTime] = useState(dayjs().format("YYYY-MM"));
   const [refreshing, setRefreshing] = useState(REFRESH_STATE.normal);
   const [loading, setLoading] = useState(LOAD_STATE.normal);
   const typeRef = useRef();
+  const dateRef = useRef();
   const [currentSelect, setCurrentSelect] = useState({});
+  const [currentTime, setCurrentTime] = useState(dayjs().format("YYYY-MM"));
+  const [totalExpense, setTotalExpense] = useState(0);
+  const [totalIncome, setTotalIncome] = useState(0);
 
   useEffect(() => {
-    console.log(page);
     getBillList();
     //eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [page, currentSelect]);
+  }, [page, currentSelect, currentTime]);
 
   const getBillList = async () => {
     try {
@@ -115,6 +36,8 @@ const Home = () => {
       } else {
         setList(list.concat(data.list));
       }
+      setTotalExpense(data.totalExpense.toFixed(2));
+      setTotalIncome(data.totalIncome.toFixed(2));
       setTotalPage(data.totalPage);
       setRefreshing(REFRESH_STATE.success);
       setLoading(LOAD_STATE.success);
@@ -144,23 +67,37 @@ const Home = () => {
     typeRef.current && typeRef.current.show();
   }
 
+  const dateToggle = () => {
+    dateRef.current && dateRef.current.show();
+  }
+
   const select = (type) => {
-    console.log('父组件', type);
+    setRefreshing(REFRESH_STATE.loading);
+    setPage(1);
+    setCurrentSelect(type);
+  }
+
+  const selectDate = (date) => {
+    setRefreshing(REFRESH_STATE.loading);
+    setPage(1);
+    setCurrentTime(date);
   }
 
   return (
     <div className={ css.home }>
       <div className={ css.header }>
         <div className={ css.dataWrap }>
-          <span className={ css.expense }>总支出: <b>￥ 200</b></span>
-          <span className={ css.income }>总支出: <b>￥ 500</b></span>
+          <span className={ css.expense }>总支出: <b>￥{ totalExpense }</b></span>
+          <span className={ css.income }>总支出: <b>￥{ totalIncome }</b></span>
         </div>
         <div className={ css.typeWrap }>
-          <div className={ css.left } onClick={ toggle }>
-            <span className={ css.title }>{ currentSelect.name || "全部类型" }<Icon className={css.arrow} type="arrow-bottom" /></span>
+          <div className={ css.left }>
+            <span className={ css.title } onClick={ toggle }>{ currentSelect.name || "全部类型" }
+              <ArrowDown className={css.arrow} />
+            </span>
           </div>
-          <div className={ css.right } onClick={ toggle }>
-            <span className={ css.time }>2023-08<Icon className={css.arrow} type="arrow-bottom" /></span>
+          <div className={ css.right }>
+            <span className={ css.time } onClick={ dateToggle }>{ currentTime }<ArrowDown className={css.arrow} /></span>
           </div>
         </div>
       </div>
@@ -180,12 +117,13 @@ const Home = () => {
             }}
           >
             {
-              list.map((item, index) => <BillItem bill={ item } key={ index } />)
+              <List>{ list.map((item, index) => <BillItem bill={ item } key={ index } />) }</List>
             }
           </Pull> : null
         }
       </div>
       <PopupType ref={ typeRef } onSelect={ select } />
+      <PopupDate ref={ dateRef } onSelect={ selectDate } mode="month" />
     </div>
   )
 }

@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from "react";
-import { Button, Input, Checkbox, Cell, Toast } from "zarm";
+import { Button, Input, Checkbox, List, Toast } from "zarm";
 import CustomIcon from "@/components/CustomIcon";
 import { post } from "@/utils";
 
@@ -44,7 +44,7 @@ const Login = () => {
         setType("login");
       }
     } catch (err) {
-      Toast.show(err.msg);
+      Toast.show(err);
     }
   }
 
@@ -64,34 +64,36 @@ const Login = () => {
         <span className={ type === "register" ? css.active : null } onClick={() => setType("register")}>注册</span>
       </div>
       <div className={ css.form }>
-        <Cell icon={ <CustomIcon type="zhanghao" /> }>
-          <Input 
-            clearable
-            type="text"
-            placeholder="请输入账号"
-            onChange={ (value) => setUsername(value) }
-          />
-        </Cell>
-        <Cell icon={ <CustomIcon type="mima" /> }>
-          <Input 
-            clearable
-            type="password"
-            placeholder="请输入密码"
-            onChange={ (value) => setPassword(value) }
-          />
-        </Cell>
-        {
-          type === 'register' ?
-          <Cell icon={ <CustomIcon type="mima" /> }>
+        <List>
+          <List.Item prefix={ <CustomIcon type="zhanghao" /> }>
             <Input 
               clearable
               type="text"
-              placeholder="请输入验证码(1234)"
-              onChange={ (value) => setVerify(value) }
+              placeholder="请输入账号"
+              onChange={ (e) => setUsername(e.target.value) }
             />
-          </Cell>
-          : null
-        }
+          </List.Item>
+          <List.Item prefix={ <CustomIcon type="mima" /> }>
+            <Input 
+              clearable
+              type="password"
+              placeholder="请输入密码"
+              onChange={ (e) => setPassword(e.target.value) }
+            />
+          </List.Item>
+          {
+            type === 'register' ?
+            <List.Item prefix={ <CustomIcon type="mima" /> }>
+              <Input 
+                clearable
+                type="text"
+                placeholder="请输入验证码(1234)"
+                onChange={ (e) => setVerify(e.target.value) }
+              />
+            </List.Item>
+            : null
+          }
+        </List>
       </div>
       <div className={ css.operation }>
         {

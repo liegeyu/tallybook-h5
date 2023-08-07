@@ -19,11 +19,17 @@ function NavBar({ showNav }) {
     }
 
     return (
-        <TabBar className={ css.navbar } visible={ showNav } activeKey={ activeBar } onChange={ changeTab }>
-            <TabBar.Item itemKey="/" title="账单" icon={ <CustomIcon type="zhangdan"/>}></TabBar.Item>
-            <TabBar.Item itemKey="/data" title="统计" icon={ <CustomIcon type="tongji"/>}></TabBar.Item>
-            <TabBar.Item itemKey="/user" title="我的" icon={ <CustomIcon type="wode"/>}></TabBar.Item>
-        </TabBar>
+        <div>
+            {
+                showNav ? 
+                <TabBar className={ css.navbar } activeKey={ activeBar } onChange={ changeTab }>
+                    <TabBar.Item itemKey="/" title="账单" icon={ <CustomIcon type="zhangdan"/>}></TabBar.Item>
+                    <TabBar.Item itemKey="/data" title="统计" icon={ <CustomIcon type="tongji"/>}></TabBar.Item>
+                    <TabBar.Item itemKey="/user" title="我的" icon={ <CustomIcon type="wode"/>}></TabBar.Item>
+                </TabBar>
+                : null
+            }
+        </div>
     )
 }
 

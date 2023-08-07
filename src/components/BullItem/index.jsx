@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Cell } from "zarm";
+import { List } from "zarm";
 import PropTypes from "prop-types";
 import CustomIcon from "../CustomIcon";
 import dayjs from "dayjs";
@@ -49,7 +49,7 @@ const BillItem = ({ bill }) => {
       {
         bill && bill.bills.map(item => {
           return (
-            <Cell
+            <List.Item
               className={ css.bill }
               key={ item.id }
               onClick={() => goToDetail(item)}
@@ -73,7 +73,7 @@ const BillItem = ({ bill }) => {
                 </div>
               }
             >
-            </Cell>
+            </List.Item>
           )
         })
       }

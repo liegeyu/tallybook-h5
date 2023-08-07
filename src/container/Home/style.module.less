@@ -1,5 +1,5 @@
 .home {
-  height: 100%;
+  height: calc(100% - 50px);
   width: 100vw;
   display: flex;
   flex-direction: column;
@@ -23,7 +23,7 @@
       & > span {
         font-size: 14px;
         & > b {
-          font-size: 24px;
+          font-size: 20px;
           margin-left: 4px;
         }
       }
@@ -43,7 +43,7 @@
         padding: 3px 8px;
         font-size: 12px;
       }
-      .left {
+      .left, .right {
         margin-left: 6px;
       }
       .arrow {
@@ -54,7 +54,7 @@
   }
 
   .contentWrap {
-    height: calc(~"(100% - 50px)");
+    height: 100%;
     overflow: hidden;
     overflow-y: scroll;
     background-color: #f5f5f5;
