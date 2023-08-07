@@ -8,17 +8,19 @@ import { ArrowDown } from '@zarm-design/icons';
 import BillItem from "@/components/BullItem";
 import PopupType from "@/components/PopupType";
 import PopupDate from '@/components/PopupDate';
+import PopupAddBill from "@/components/PopupAddBill";
 import CustomIcon from "@/components/CustomIcon";
 import css from "./style.module.less";
 
 const Home = () => {
+  const typeRef = useRef();
+  const dateRef = useRef();
+  const addBillRef = useRef();
   const [list, setList] = useState([]);
   const [page, setPage] = useState(1);  // 分页
   const [totalPage, setTotalPage] = useState(0);
   const [refreshing, setRefreshing] = useState(REFRESH_STATE.normal);
   const [loading, setLoading] = useState(LOAD_STATE.normal);
-  const typeRef = useRef();
-  const dateRef = useRef();
   const [currentSelect, setCurrentSelect] = useState({});
   const [currentTime, setCurrentTime] = useState(dayjs().format("YYYY-MM"));
   const [totalExpense, setTotalExpense] = useState(0);
@@ -72,6 +74,10 @@ const Home = () => {
     dateRef.current && dateRef.current.show();
   }
 
+  const addToggle = () => {
+    addBillRef.current && addBillRef.current.show();
+  }
+
   const select = (type) => {
     setRefreshing(REFRESH_STATE.loading);
     setPage(1);
@@ -82,10 +88,6 @@ const Home = () => {
     setRefreshing(REFRESH_STATE.loading);
     setPage(1);
     setCurrentTime(date);
-  }
-
-  const addHandler = () => {
-
   }
 
   return (
@@ -127,9 +129,10 @@ const Home = () => {
           </Pull> : null
         }
       </div>
-      <div className={ css.add } onClick={ addHandler }><CustomIcon type="tianjia" /></div>
+      <div className={ css.add } onClick={ addToggle }><CustomIcon type="tianjia" /></div>
       <PopupType ref={ typeRef } onSelect={ select } />
       <PopupDate ref={ dateRef } onSelect={ selectDate } mode="month" />
+      <PopupAddBill ref={ addBillRef } />
     </div>
   )
 }
