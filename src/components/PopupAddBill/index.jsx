@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, forwardRef } from "react";
-import PropTypes from "prop-types";
+import PropTypes, { objectOf } from "prop-types";
 import cx from "classnames";
 import dayjs from "dayjs";
 import { Popup, Keyboard, Input, Toast } from "zarm";
