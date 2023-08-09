@@ -10,6 +10,7 @@ import PopupType from "@/components/PopupType";
 import PopupDate from '@/components/PopupDate';
 import PopupAddBill from "@/components/PopupAddBill";
 import CustomIcon from "@/components/CustomIcon";
+
 import css from "./style.module.less";
 
 const Home = () => {
@@ -132,7 +133,7 @@ const Home = () => {
       <div className={ css.add } onClick={ addToggle }><CustomIcon type="tianjia" /></div>
       <PopupType ref={ typeRef } onSelect={ select } />
       <PopupDate ref={ dateRef } onSelect={ selectDate } mode="month" />
-      <PopupAddBill ref={ addBillRef } />
+      <PopupAddBill ref={ addBillRef } onReload={ refreshDate } />
     </div>
   )
 }
