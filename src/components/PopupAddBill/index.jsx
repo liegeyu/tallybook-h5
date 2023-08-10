@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useRef, forwardRef } from "react";
-import PropTypes, { objectOf } from "prop-types";
+import { useState, useEffect, useRef, forwardRef } from "react";
+import PropTypes from "prop-types";
 import cx from "classnames";
 import dayjs from "dayjs";
 import { Popup, Keyboard, Input, Toast } from "zarm";
@@ -11,7 +11,7 @@ import { get, post } from "@/utils/index.js";
 
 import css from "./style.module.less";
 
-const PopupAddBill = forwardRef((props, ref) => {
+const PopupAddBill = forwardRef(({ detail = {}, onReload}, ref) => {
   const dateRef = useRef();
   const [show, setShow] = useState(false);
   const [amount, setAmount] = useState('');
@@ -22,6 +22,7 @@ const PopupAddBill = forwardRef((props, ref) => {
   const [income, setIncome] = useState([]);
   const [remark, setRemark] = useState('');
   const [showRemark, setShowRemark] = useState(false);
+  const id = detail && detail.id;
 
   useEffect(() => {
     (async () => {
@@ -30,7 +31,9 @@ const PopupAddBill = forwardRef((props, ref) => {
       const _income = list.filter(item => item.type === '2');
       setExpense(_expense);
       setIncome(_income);
-      setCurrentType(_expense[0]);
+      if (!id) {
+        setCurrentType(_expense[0]);  // 新单
+      }
     })()
   }, []);
 
@@ -40,7 +43,21 @@ const PopupAddBill = forwardRef((props, ref) => {
     } else {
       setCurrentType(income[0]);
     }
-  }, [payType, expense, income])
+  }, [payType, expense, income]);
+
+  useEffect(() => {
+    if (!detail.id) {
+      return;
+    }
+    setPayType(detail.pay_type === 1 ? 'expense' : 'income');
+    setCurrentType({
+      id: detail.type_id,
+      name: detail.type_name,
+    })
+    setRemark(detail.remark);
+    setAmount(detail.amount);
+    setDate((dayjs(Number(detail.date)).$d));
+  }, [detail]);
 
   if (ref) {
     ref.current = {
@@ -77,7 +94,6 @@ const PopupAddBill = forwardRef((props, ref) => {
       }
       default: break;
     }
-    console.log(key);
     if (amount.includes('.') && amount && amount.split('.')[1].length >= 2) {
       return;
     }
@@ -110,16 +126,23 @@ const PopupAddBill = forwardRef((props, ref) => {
       remark: remark || '' // 备注
     }
     try {
-      await post("/bill/add", params);
-      setAmount('');
-      setPayType("expense");
-      setCurrentType(expense[0]);
-      setDate(new Date());
-      setRemark('');
-      Toast.show('添加成功');
+      if (id) {
+        params.id = id;
+        await post("/bill/update", params);
+        Toast.show("修改成功");
+      } else {
+        await post("/bill/add", params);
+        setAmount('');
+        setPayType("expense");
+        setCurrentType(expense[0]);
+        setDate(new Date());
+        setRemark('');
+        Toast.show('添加成功');
+      }
       setShow(false);
-      console.log(props);
-      if (props.onReload) props.onReload();
+      if (onReload) {
+        onReload(); 
+      }
     } catch (err) {
       Toast.show('添加失败');
       setShow(false);
@@ -155,6 +178,10 @@ const PopupAddBill = forwardRef((props, ref) => {
             <ArrowDown className={ css.arrow } size="sm" />
           </div>
         </div>
+        <div className={ css.money }>
+          <span className={ css.sufix }>￥</span>
+          <span className={ cx(css.amount, css.animation) }>{ amount }</span>
+        </div>
         <div className={ css.typeWarp }>
           <div className={ css.typeBody }>
             {
@@ -185,10 +212,6 @@ const PopupAddBill = forwardRef((props, ref) => {
             /> : <span onClick={() => setShowRemark(true)}>{ remark || '添加备注' }</span>
           }
         </div>  
-        <div className={ css.money }>
-          <span className={ css.sufix }>￥</span>
-          <span className={ cx(css.amount, css.animation) }>{ amount }</span>
-        </div>
         <Keyboard type="price" style={ keyboarkStyle } onKeyClick={(key) => pressHandler(key) } />
         <PopupDate ref={ dateRef } onSelect={ selectDate } />
       </div>
@@ -197,5 +220,10 @@ const PopupAddBill = forwardRef((props, ref) => {
 })
 
 PopupAddBill.displayName = 'PopupAddBill';
+
+PopupAddBill.propTypes = {
+  detail: PropTypes.object,
+  onReload: PropTypes.func
+}
 
 export default PopupAddBill;
