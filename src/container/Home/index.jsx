@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { List, Pull } from "zarm";
 import dayjs from "dayjs";
 import { REFRESH_STATE, LOAD_STATE } from "@/utils/pull.js";

@@ -48,19 +48,31 @@ const Data = () => {
       </div>
       <div className={ css.structure }>
         <div className={ css.header }>
-          <span>收支构成</span>
+          <span className={ css.title }>收支构成</span>
           <div className={ css.tabs }>
-            <span>支出</span>
-            <span>收入</span>
+            <span onClick={() => setTotalType('expense')} className={cx({[css.expense]: true, [css.active]: totalType === 'expense'})}>支出</span>
+            <span onClick={() => setTotalType('income')} className={cx({[css.income]: true, [css.active]: totalType === 'income'})}>收入</span>
           </div>
         </div>
         <div className={ css.content }>
-          <div className={ css.left }>
-
-          </div>
-          <div className={ css.right }>
-            
-          </div>
+          {
+            (totalType === 'expense' ? expenseData : incomeData).map(item => <div key={ item.type_id} className={ css.item }>
+              <div className={ css.left }>
+                <div className={ css.type }>
+                  <span className={ cx({[css.expense]: totalType === 'expense', [css.income]: totalType === 'income'}) }>
+                    <CustomIcon type={ item.type_id ? typeMap[item.type_id].icon : 1 } />
+                  </span>
+                  <span className={ css.name }>{ item.type_name }</span>
+                </div>
+                <div className={ css.progress }>
+                  
+                </div>
+              </div>
+              <div className={ css.right }>
+                
+              </div>
+            </div>)
+          }
         </div>
       </div>
       <PopupDate ref={ dateRef } mode="month" onSelect={ selectMonth } />
