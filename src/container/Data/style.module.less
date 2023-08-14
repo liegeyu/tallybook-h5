@@ -89,5 +89,59 @@
 
       }
     }
+    .content {
+      .item {
+        display: flex;
+        align-items: center;
+        height: 50px;
+        .left {
+          flex: 4;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          margin-right: 10px;
+          .type {
+            display: flex;
+            align-items: center;
+            span:nth-of-type(1) {
+              display: flex;
+              justify-content: center;
+              align-items: center;
+              border-radius: 50%;
+              width: 30px;
+              height: 30px;
+              margin-right: 10px;
+              color: #fff;
+              flex-shrink: 0;
+            }
+            .name {
+              width: 30px;
+            }
+            .expense {
+              background-color: #007fff;
+            }
+            .income {
+              background-color: rgb(236, 190, 37);
+            }
+          }
+        }
+        .right {
+          flex: 8;
+          display: flex;
+          align-items: center;
+          .percent {
+            flex: 1;
+            :global {
+              .za-progress__track {
+                background: transparent;
+              }
+            }
+          }
+          .momey {
+            width: 100px;
+          }
+        }
+      }
+    }
   }
 }
