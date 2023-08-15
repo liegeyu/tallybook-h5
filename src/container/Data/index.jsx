@@ -25,8 +25,9 @@ const Data = () => {
   useEffect(() => {
     fetchData();
     return () => {
-      chartIns.dispose(); // 释放图表实例
+      // chartIns.dispose(); // 释放图表实例
     }
+    //eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentMonth]);
 
   const fetchData = async () => {
@@ -41,14 +42,42 @@ const Data = () => {
     setExpenseData(_expenseData);
     setIncomeData(_incomeData);
     
-    drawPieChart(totalType === 'expense' ? expenseData : incomeData);
+    drawPieChart(totalType === 'expense' ? _expenseData : _incomeData);
   }
 
   const drawPieChart = (data) => {
     if (window.echarts) {
+      const echarts = window.echarts;
       chartIns = echarts.init(document.getElementById("proportion"));
       chartIns.setOption({
-
+        tooltip: {
+          trigger: 'item',
+          formatter: '{a} <br/>{b} : {c} ({d}%)'
+        },
+        // 图例
+        legend: {
+            data: data.map(item => item.type_name)
+        },
+        series: [
+          {
+            name: '支出',
+            type: 'pie',
+            radius: '55%',
+            data: data.map(item => {
+              return {
+                value: item.number,
+                name: item.type_name
+              }
+            }),
+            emphasis: {
+              itemStyle: {
+                shadowBlur: 10,
+                shadowOffsetX: 0,
+                shadowColor: 'rgba(0, 0, 0, 0.5)'
+              }
+            }
+          }
+        ]
       })
     }
   }
@@ -63,7 +92,7 @@ const Data = () => {
 
   const togglePieType = (type) => {
     setPieType(type);
-    drawPieChart(totalType === 'expense' ? expenseData : incomeData);
+    drawPieChart(type === 'expense' ? expenseData : incomeData);
   }
 
   return (
@@ -108,6 +137,16 @@ const Data = () => {
               </div>
             </div>)
           }
+        </div>
+        <div className={ css.proportion }>
+          <div className={ css.header }>
+            <span className={ css.title }>收支构成</span>
+            <div className={ css.tabs }>
+              <span onClick={() => togglePieType('expense')} className={cx({[css.expense]: true, [css.active]: pieType === 'expense'})}>支出</span>
+              <span onClick={() => togglePieType('income')} className={cx({[css.income]: true, [css.active]: pieType === 'income'})}>收入</span>
+            </div>
+          </div>
+          <div id="proportion"></div>
         </div>
       </div>
       <PopupDate ref={ dateRef } mode="month" onSelect={ selectMonth } />
