@@ -17,6 +17,7 @@
     "lib-flexible": "^0.3.2",
     "postcss": "^8.4.25",
     "postcss-pxtorem": "^6.0.0",
+    "rc-form": "^2.4.12",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.14.1",
